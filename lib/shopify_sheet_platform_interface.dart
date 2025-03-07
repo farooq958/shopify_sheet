@@ -26,4 +26,8 @@ abstract class ShopifySheetPlatform extends PlatformInterface {
   Stream<Map<String, dynamic>> get checkoutEvents {
     throw UnimplementedError('checkoutEvents has not been implemented.');
   }
+
+  Future<void> closeCheckout() {
+    throw UnimplementedError('checkoutEvents has not been implemented.');
+  }
 }

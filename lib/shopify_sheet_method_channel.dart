@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+
 import 'shopify_sheet_platform_interface.dart';
 
 class MethodChannelShopifySheet extends ShopifySheetPlatform {
@@ -7,13 +8,15 @@ class MethodChannelShopifySheet extends ShopifySheetPlatform {
 
   @override
   Future<String?> getPlatformVersion() async {
-    final version = await methodChannel.invokeMethod<String>('getPlatformVersion');
+    final version =
+        await methodChannel.invokeMethod<String>('getPlatformVersion');
     return version;
   }
 
   @override
   Future<void> launchCheckout(String checkoutUrl) async {
-    await methodChannel.invokeMethod('launchCheckout', {'checkoutUrl': checkoutUrl});
+    await methodChannel
+        .invokeMethod('launchCheckout', {'checkoutUrl': checkoutUrl});
   }
 
   @override
@@ -22,4 +25,7 @@ class MethodChannelShopifySheet extends ShopifySheetPlatform {
       return Map<String, dynamic>.from(event);
     });
   }
+
+  @override
+  Future<void> closeCheckout() => methodChannel.invokeMethod('closeCheckout');
 }

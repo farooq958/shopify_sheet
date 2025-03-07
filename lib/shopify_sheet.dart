@@ -16,7 +16,8 @@ class ShopifySheetEvent {
   factory ShopifySheetEvent.fromNative(Map<String, dynamic> data) {
     final eventType = data['event'];
     final error = data['error'] as String?;
-    final eventData = data['data'] as Map<dynamic, dynamic>?; // Extract additional data
+    final eventData =
+        data['data'] as Map<dynamic, dynamic>?; // Extract additional data
 
     switch (eventType) {
       case 'completed':
@@ -36,7 +37,8 @@ class ShopifySheetEvent {
           error: error,
         );
       case 'pixel_event':
-        return ShopifySheetEvent(type: ShopifySheetEventType.pixelEvent, data: eventData);
+        return ShopifySheetEvent(
+            type: ShopifySheetEventType.pixelEvent, data: eventData);
       default:
         return ShopifySheetEvent(
           type: ShopifySheetEventType.unknown,
@@ -47,14 +49,7 @@ class ShopifySheetEvent {
 }
 
 /// Enum for Shopify Checkout event types
-enum ShopifySheetEventType {
-  completed,
-  canceled,
-  failed,
-  unknown,
-  pixelEvent
-}
-
+enum ShopifySheetEventType { completed, canceled, failed, unknown, pixelEvent }
 
 class ShopifySheet {
   Future<String?> getPlatformVersion() {
@@ -70,5 +65,9 @@ class ShopifySheet {
     return ShopifySheetPlatform.instance.checkoutEvents.map((event) {
       return ShopifySheetEvent.fromNative(event);
     });
+  }
+
+  Future<void> closeCheckout() {
+    return ShopifySheetPlatform.instance.closeCheckout();
   }
 }
