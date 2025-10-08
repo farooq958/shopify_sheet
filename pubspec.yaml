@@ -1,6 +1,6 @@
 name: shopify_sheet
 description: "Flutter Shopify Checkout Sheet Plugin"
-version: 0.0.6
+version: 0.0.7
 homepage: https://github.com/farooq958/shopify_sheet
 
 environment:
