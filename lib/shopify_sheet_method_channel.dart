@@ -1,4 +1,5 @@
 import 'package:flutter/services.dart';
+import 'package:shopify_sheet/shopify_sheet.dart';
 
 import 'shopify_sheet_platform_interface.dart';
 
@@ -14,9 +15,14 @@ class MethodChannelShopifySheet extends ShopifySheetPlatform {
   }
 
   @override
-  Future<void> launchCheckout(String checkoutUrl) async {
-    await methodChannel
-        .invokeMethod('launchCheckout', {'checkoutUrl': checkoutUrl});
+  Future<void> launchCheckout(
+      String checkoutUrl, {
+        ShopifySheetConfiguration? configuration,
+      }) async {
+    await methodChannel.invokeMethod('launchCheckout', {
+      'checkoutUrl': checkoutUrl,
+      if (configuration != null) 'config': configuration.toMap(),
+    });
   }
 
   @override

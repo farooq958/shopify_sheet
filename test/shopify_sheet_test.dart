@@ -10,11 +10,7 @@ class MockShopifySheetPlatform
   @override
   Future<String?> getPlatformVersion() => Future.value('42');
 
-  @override
-  Future<void> launchCheckout(String checkoutUrl) {
-    // TODO: implement launchCheckout
-    throw UnimplementedError();
-  }
+
 
   @override
   // TODO: implement checkoutEvents
@@ -22,6 +18,12 @@ class MockShopifySheetPlatform
 
   @override
   Future<void> closeCheckout() => throw UnimplementedError();
+
+  @override
+  Future<void> launchCheckout(String checkoutUrl, {ShopifySheetConfiguration? configuration}) {
+    // TODO: implement launchCheckout
+    throw UnimplementedError();
+  }
 }
 
 void main() {

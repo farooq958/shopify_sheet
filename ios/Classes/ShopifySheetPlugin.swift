@@ -23,7 +23,8 @@ public class ShopifySheetPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
                 result(FlutterError(code: "INVALID_ARGUMENTS", message: "Invalid or missing arguments", details: nil))
                 return
             }
-            presentCheckout(url: checkoutUrl, result: result)
+            let config = args["config"] as? [String: Any]
+            presentCheckout(url: checkoutUrl, config: config, result: result)
         case "closeCheckout":
             closeCheckout(result: result)
         default:
@@ -41,10 +42,15 @@ public class ShopifySheetPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
         return nil
     }
 
-    private func presentCheckout(url: String, result: @escaping FlutterResult) {
+    private func presentCheckout(url: String, config: [String: Any]?, result: @escaping FlutterResult) {
         guard let checkoutURL = URL(string: url) else {
             result(FlutterError(code: "INVALID_URL", message: "Invalid Checkout URL", details: nil))
             return
+        }
+
+        // Apply configuration if provided
+        if let config = config {
+            applyConfiguration(config)
         }
 
         DispatchQueue.main.async {
@@ -53,13 +59,64 @@ public class ShopifySheetPlugin: NSObject, FlutterPlugin, FlutterStreamHandler {
                 return
             }
 
-        self.checkoutViewController = ShopifyCheckoutSheetKit.present(
+            self.checkoutViewController = ShopifyCheckoutSheetKit.present(
                 checkout: checkoutURL,
                 from: rootViewController,
                 delegate: self
             )
             result("Checkout Launched")
         }
+    }
+
+    private func applyConfiguration(_ configMap: [String: Any]) {
+
+        // Color scheme
+        if let scheme = configMap["colorScheme"] as? String {
+            switch scheme {
+            case "light":
+                ShopifyCheckoutSheetKit.configuration.colorScheme = .light
+            case "dark":
+                ShopifyCheckoutSheetKit.configuration.colorScheme = .dark
+            case "web":
+                ShopifyCheckoutSheetKit.configuration.colorScheme = .web
+            default:
+                ShopifyCheckoutSheetKit.configuration.colorScheme = .automatic
+            }
+        }
+        
+
+        if let title = configMap["title"] as? String {
+            ShopifyCheckoutSheetKit.configuration.title = title
+        }
+
+        // Tint color
+        if let tintColor = configMap["tintColor"] as? String,
+           let color = hexToUIColor(hex: tintColor) {
+            ShopifyCheckoutSheetKit.configuration.tintColor = color
+        }
+
+        // Close button tint
+        if let closeButtonTintColor = configMap["closeButtonTintColor"] as? String,
+           let color = hexToUIColor(hex: closeButtonTintColor) {
+            ShopifyCheckoutSheetKit.configuration.closeButtonTintColor = color
+        }
+    }
+
+
+    private func hexToUIColor(hex: String) -> UIColor? {
+        var hexSanitized = hex.trimmingCharacters(in: .whitespacesAndNewlines)
+        hexSanitized = hexSanitized.replacingOccurrences(of: "#", with: "")
+
+        var rgb: UInt64 = 0
+        guard Scanner(string: hexSanitized).scanHexInt64(&rgb) else {
+            return nil
+        }
+
+        let red = CGFloat((rgb & 0xFF0000) >> 16) / 255.0
+        let green = CGFloat((rgb & 0x00FF00) >> 8) / 255.0
+        let blue = CGFloat(rgb & 0x0000FF) / 255.0
+
+        return UIColor(red: red, green: green, blue: blue, alpha: 1.0)
     }
 
     private func closeCheckout(result: @escaping FlutterResult) {
@@ -120,7 +177,7 @@ extension ShopifySheetPlugin: CheckoutDelegate {
     }
 }
 
-// Helper functions remain the same
+// Helper functions
 private func encodeStandardEventData(_ data: ShopifyCheckoutSheetKit.StandardEventData) -> [String: Any] {
     do {
         let jsonData = try JSONEncoder().encode(data)

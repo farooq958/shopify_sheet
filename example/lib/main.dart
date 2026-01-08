@@ -15,6 +15,8 @@ class MyApp extends StatelessWidget {
 }
 
 class ShopifyCheckoutDemo extends StatefulWidget {
+  const ShopifyCheckoutDemo({super.key});
+
   @override
   State<ShopifyCheckoutDemo> createState() => _ShopifyCheckoutDemoState();
 }
@@ -53,7 +55,13 @@ class _ShopifyCheckoutDemoState extends State<ShopifyCheckoutDemo> {
   void _launchCheckout() {
 
     _shopifySheet.launchCheckout(
-        'https://modish-2-0.myshopify.com/cart/c/Z2NwLWFzaWEtc291dGhlYXN0MTowMUpGOU0xRUtQSjhTWk1aMjY2VlZZWUZTMA?key=7877f0ef27e2a7006c63da8096ea7d58'
+        'https://modish-2-0.myshopify.com/password'
+
+    , configuration: ShopifySheetConfiguration(
+           title: "CustomCheckout",
+           colorScheme: 'light'
+    )
+
     );
   }
 
