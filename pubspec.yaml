@@ -1,21 +1,21 @@
 name: shopify_sheet
 description: "Flutter Shopify Checkout Sheet Plugin"
-version: 0.0.4
+version: 0.0.7
 homepage: https://github.com/farooq958/shopify_sheet
 
 environment:
-  sdk: ^3.5.3
-  flutter: '>=3.3.0'
+  sdk: ^3.9.0
+  flutter: '>=3.35.0'
 
 dependencies:
   flutter:
     sdk: flutter
-  plugin_platform_interface: ^2.0.2
+  plugin_platform_interface: ^2.1.8
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  flutter_lints: ^4.0.0
+  flutter_lints: ^6.0.0
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec

@@ -2,15 +2,14 @@ group = "com.checkoutsheetshopify.shopify_sheet"
 version = "1.0-SNAPSHOT"
 
 buildscript {
-    ext.kotlin_version = "1.8.22"
     repositories {
         google()
         mavenCentral()
     }
 
     dependencies {
-        classpath("com.android.tools.build:gradle:8.1.0")
-        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version")
+        classpath("com.android.tools.build:gradle:8.13.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:2.2.20")
     }
 }
 
@@ -29,15 +28,15 @@ android {
         namespace = "com.checkoutsheetshopify.shopify_sheet"
     }
 
-    compileSdk = 34
+    compileSdk = 36
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_1_8
+        jvmTarget = JavaVersion.VERSION_17
     }
 
     sourceSets {
@@ -46,16 +45,16 @@ android {
     }
 
     defaultConfig {
-        minSdk = 23
+        minSdk = 24
     }
 
     dependencies {
-        implementation 'com.shopify:checkout-sheet-kit:3.3.0'
-        implementation 'androidx.appcompat:appcompat:1.7.0'
-        implementation 'androidx.activity:activity:1.9.3'
-        implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.8.7'
+        implementation 'com.shopify:checkout-sheet-kit:3.5.3'
+        implementation 'androidx.appcompat:appcompat:1.7.1'
+        implementation 'androidx.activity:activity:1.11.0'
+        implementation 'androidx.lifecycle:lifecycle-runtime-ktx:2.9.4'
         testImplementation("org.jetbrains.kotlin:kotlin-test")
-        testImplementation("org.mockito:mockito-core:5.0.0")
+        testImplementation("org.mockito:mockito-core:5.20.0")
     }
 
     testOptions {
