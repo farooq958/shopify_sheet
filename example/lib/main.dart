@@ -4,7 +4,7 @@ import 'package:shopify_sheet/shopify_sheet.dart';
 void main() => runApp(const MyApp());
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +45,7 @@ class _ShopifyCheckoutDemoState extends State<ShopifyCheckoutDemo> {
           print("Pixel Event: ${event.data}");
           break;
         case ShopifySheetEventType.unknown:
-        default:
-          print("Unknown Event: ${event.error}");
+        print("Unknown Event: ${event.error}");
       }
 
     });
