@@ -13,7 +13,10 @@ A new Flutter project.
   s.license          = { :file => '../LICENSE' }
   s.author           = { 'Your Company' => 'farooqafridi958@gmail.com' }
   s.source           = { :path => '.' }
-  s.source_files = 'Classes/**/*'
+  s.source_files = 'shopify_sheet/Sources/shopify_sheet/**/*.swift'
+  s.resource_bundles = {
+    'shopify_sheet_privacy' => ['shopify_sheet/Sources/shopify_sheet/Resources/PrivacyInfo.xcprivacy']
+  }
   s.dependency 'Flutter'
   s.platform = :ios, '13.0'
 
@@ -21,9 +24,4 @@ A new Flutter project.
   s.pod_target_xcconfig = { 'DEFINES_MODULE' => 'YES', 'EXCLUDED_ARCHS[sdk=iphonesimulator*]' => 'i386' }
   s.swift_version = '5.0'
   s.dependency 'ShopifyCheckoutSheetKit', '~> 3'
-  # If your plugin requires a privacy manifest, for example if it uses any
-  # required reason APIs, update the PrivacyInfo.xcprivacy file to describe your
-  # plugin's privacy impact, and then uncomment this line. For more information,
-  # see https://developer.apple.com/documentation/bundleresources/privacy_manifest_files
-  # s.resource_bundles = {'shopify_sheet_privacy' => ['Resources/PrivacyInfo.xcprivacy']}
 end
