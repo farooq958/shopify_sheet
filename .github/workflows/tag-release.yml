@@ -1,0 +1,95 @@
+# On every push to master, if pubspec.yaml has a version that is not yet on
+# pub.dev and has no git tag, create and push tag vX.Y.Z.
+# That tag push triggers publish.yml (OIDC → pub.dev).
+#
+# IMPORTANT: Tags pushed with the default GITHUB_TOKEN do not start other
+# workflows. For full master → publish automation, add a repo secret:
+#
+#   RELEASE_TOKEN = fine-grained PAT (or classic) with Contents: Read & Write
+#                   on farooq958/shopify_sheet
+#
+# Without RELEASE_TOKEN, this job still creates the tag, but you must push it
+# again from your machine (or add the secret) to trigger publishing:
+#   git push origin vX.Y.Z
+
+name: Tag release on master
+
+on:
+  push:
+    branches:
+      - master
+
+concurrency:
+  group: tag-release-master
+  cancel-in-progress: false
+
+jobs:
+  tag:
+    name: Create version tag
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          # Prefer RELEASE_TOKEN so the subsequent tag push triggers publish.yml.
+          token: ${{ secrets.RELEASE_TOKEN || github.token }}
+
+      - name: Read version from pubspec.yaml
+        id: meta
+        run: |
+          VERSION="$(sed -n 's/^version:[[:space:]]*//p' pubspec.yaml | tr -d '"' | tr -d "'")"
+          TAG="v${VERSION}"
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "tag=${TAG}" >> "$GITHUB_OUTPUT"
+          echo "Package version: ${VERSION}"
+
+      - name: Skip if already on pub.dev
+        id: pub
+        run: |
+          VERSION="${{ steps.meta.outputs.version }}"
+          CODE="$(curl -s -o /dev/null -w '%{http_code}' \
+            "https://pub.dev/api/packages/shopify_sheet/versions/${VERSION}")"
+          if [ "$CODE" = "200" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Version ${VERSION} is already on pub.dev — nothing to do."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "Version ${VERSION} is not on pub.dev yet (HTTP ${CODE})."
+          fi
+
+      - name: Skip if tag already exists
+        id: git_tag
+        if: steps.pub.outputs.exists == 'false'
+        run: |
+          TAG="${{ steps.meta.outputs.tag }}"
+          if git ls-remote --exit-code --tags origin "refs/tags/${TAG}" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "Tag ${TAG} already exists on origin."
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+            echo "Tag ${TAG} does not exist yet."
+          fi
+
+      - name: Require CHANGELOG entry
+        if: steps.pub.outputs.exists == 'false' && steps.git_tag.outputs.exists == 'false'
+        run: |
+          VERSION="${{ steps.meta.outputs.version }}"
+          if ! grep -qE "^##[[:space:]]*${VERSION}([[:space:]]|$)" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no '## ${VERSION}' heading — add it before releasing."
+            exit 1
+          fi
+
+      - name: Create and push tag
+        if: steps.pub.outputs.exists == 'false' && steps.git_tag.outputs.exists == 'false'
+        run: |
+          TAG="${{ steps.meta.outputs.tag }}"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git tag -a "$TAG" -m "Release $TAG"
+          git push origin "$TAG"
+          echo "Pushed ${TAG}."
+          if [ -z "${{ secrets.RELEASE_TOKEN }}" ]; then
+            echo "::warning::RELEASE_TOKEN secret is not set. The tag was pushed with GITHUB_TOKEN, which usually does not trigger publish.yml. Add RELEASE_TOKEN (PAT with contents:write) or run: git push origin ${TAG}"
+          fi

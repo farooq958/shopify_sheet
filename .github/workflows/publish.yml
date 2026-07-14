@@ -1,0 +1,70 @@
+# Publishes shopify_sheet to pub.dev when a version tag is pushed.
+#
+# pub.dev admin (one-time):
+#   https://pub.dev/packages/shopify_sheet/admin
+#   → Automated publishing → Enable publishing from GitHub Actions
+#   → Repository: farooq958/shopify_sheet
+#   → Tag pattern: v{{version}}
+#
+# Docs: https://dart.dev/tools/pub/automated-publishing
+
+name: Publish to pub.dev
+
+on:
+  push:
+    tags:
+      - 'v[0-9]+.[0-9]+.[0-9]+*'
+
+jobs:
+  verify:
+    name: Verify version tag
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check tag matches pubspec.yaml
+        run: |
+          TAG="${GITHUB_REF_NAME#v}"
+          VERSION="$(sed -n 's/^version:[[:space:]]*//p' pubspec.yaml | tr -d '"' | tr -d "'")"
+          echo "Tag version:     $TAG"
+          echo "Pubspec version: $VERSION"
+          if [ "$TAG" != "$VERSION" ]; then
+            echo "::error::Tag v$TAG does not match pubspec.yaml version $VERSION"
+            exit 1
+          fi
+
+      - name: Check CHANGELOG mentions this version
+        run: |
+          VERSION="$(sed -n 's/^version:[[:space:]]*//p' pubspec.yaml | tr -d '"' | tr -d "'")"
+          if ! grep -qE "^##[[:space:]]*${VERSION}([[:space:]]|$)" CHANGELOG.md; then
+            echo "::error::CHANGELOG.md has no '## $VERSION' heading"
+            exit 1
+          fi
+
+  test:
+    name: Test
+    needs: verify
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Install dependencies
+        run: flutter pub get
+
+      - name: Analyze
+        run: flutter analyze --no-fatal-infos
+
+      - name: Test
+        run: flutter test
+
+  publish:
+    name: Publish
+    needs: test
+    permissions:
+      id-token: write
+    uses: dart-lang/setup-dart/.github/workflows/publish.yml@v1

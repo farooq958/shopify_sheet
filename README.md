@@ -16,7 +16,7 @@ Add the following dependency to your `pubspec.yaml` file:
 
 ```yaml
 dependencies:
-  shopify_sheet: ^0.1.1
+  shopify_sheet: ^0.1.2
 ```
 
 Run the following command to get the package:

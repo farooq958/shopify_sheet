@@ -1,5 +1,4 @@
-
-# Contributing to quick_state
+# Contributing to shopify_sheet
 
 Thank you for considering contributing to **Shopify Sheet Flutter Plugin**! We appreciate your help in improving this package and making it even more useful for the Flutter community.
 
@@ -9,7 +8,7 @@ Thank you for considering contributing to **Shopify Sheet Flutter Plugin**! We a
 
 2. **Clone the Repository**:
    ```bash
-   git clone https://github.com/farooq958/quick_change.git
+   git clone https://github.com/farooq958/shopify_sheet.git
    ```
 
 3. **Create a Branch**: Work on your feature or bug fix in a new branch.
@@ -36,9 +35,41 @@ Thank you for considering contributing to **Shopify Sheet Flutter Plugin**! We a
 
 8. **Submit a Pull Request**: Open a pull request on the main repository with a detailed description of your changes.
 
+## Releasing a new version
+
+1. Bump `version` in `pubspec.yaml`.
+2. Add a matching `## x.y.z` entry in `CHANGELOG.md`.
+3. Merge to `master`.
+
+CI then:
+
+1. Creates git tag `vX.Y.Z` (if that version is not already on pub.dev).
+2. Publishes to [pub.dev](https://pub.dev/packages/shopify_sheet) from that tag.
+
+### One-time setup (required for publish)
+
+1. Open [pub.dev package admin](https://pub.dev/packages/shopify_sheet/admin).
+2. Under **Automated publishing**, enable **publishing from GitHub Actions**.
+3. Set **Repository** to `farooq958/shopify_sheet`.
+4. Set **Tag pattern** to `v{{version}}`.
+
+### One-time setup (recommended for master → publish)
+
+GitHub does not let workflows started with the default `GITHUB_TOKEN` trigger other workflows. Add a repo secret so tagging on `master` can start the publish job:
+
+1. Create a fine-grained PAT with **Contents: Read and write** on `farooq958/shopify_sheet`.
+2. In the repo: **Settings → Secrets and variables → Actions → New repository secret**.
+3. Name: `RELEASE_TOKEN`, value: the PAT.
+
+Without `RELEASE_TOKEN`, the tag is still created; push it yourself once to publish:
+
+```bash
+git push origin vX.Y.Z
+```
+
 ## Code of Conduct
 
-By participating in this project, you agree to abide by our [Code of Conduct](CODE_OF_CONDUCT.md). Please be respectful and considerate of others when contributing.
+By participating in this project, please be respectful and considerate of others when contributing.
 
 ## Reporting Issues
 
