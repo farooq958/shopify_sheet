@@ -53,17 +53,19 @@ CI then:
 3. Set **Repository** to `farooq958/shopify_sheet`.
 4. Set **Tag pattern** to `v{{version}}`.
 
-### One-time setup (recommended for master → publish)
+### One-time setup (required for master → publish)
 
 GitHub does not let workflows started with the default `GITHUB_TOKEN` trigger other workflows. Add a repo secret so tagging on `master` can start the publish job:
 
 1. Create a fine-grained PAT with **Contents: Read and write** on `farooq958/shopify_sheet`.
 2. In the repo: **Settings → Secrets and variables → Actions → New repository secret**.
-3. Name: `RELEASE_TOKEN`, value: the PAT.
+3. Name must be exactly: `RELEASE_TOKEN`
+4. Value: the PAT
 
-Without `RELEASE_TOKEN`, the tag is still created; push it yourself once to publish:
+If a tag was created before this secret existed, delete and re-push it once:
 
 ```bash
+git push --delete origin vX.Y.Z
 git push origin vX.Y.Z
 ```
 
