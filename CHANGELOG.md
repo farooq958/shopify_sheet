@@ -19,3 +19,11 @@
 ## 0.0.7
 * update checkout-sheet-kit-android 3.5.3 + dependencies Android iOS plus added checkout sheet configuration
 
+## 0.1.0
+* implement android pixel events
+
+## 0.1.1
+* swift package manager support
+
+## 0.1.2
+* android: update checkout-sheet-kit 3.5.4 + dependencies
