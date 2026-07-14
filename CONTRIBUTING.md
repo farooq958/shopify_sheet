@@ -7,7 +7,7 @@ Thank you for considering contributing to **Shopify Sheet Flutter Plugin**! We a
 1. **Fork the Repository**: Create your own fork of the project to work on.
 
 2. **Clone the Repository**:
-   ```bash
+   ```bash 
    git clone https://github.com/farooq958/shopify_sheet.git
    ```
 
